@@ -9,11 +9,10 @@ Cardano blockchain explorer with GraphQL API for PHRCK stake pool.
     git clone https://github.com/input-output-hk/cardano-graphql.git;\
     cd cardano-graphql
     ```
-1. Get the bash script from this repo and run.
+1. Get the bash script from this repo and make it executable.
     ```
     wget https://raw.githubusercontent.com/inimrod/phrck-cardano-graphql/master/phrck-config.sh;\
-    chmod +x phrck-config.sh;\
-    ./phrck-config.sh
+    chmod +x phrck-config.sh
     ```
 1. Edit the bash script and provide the secrets for postgres and other variables.
     ```
