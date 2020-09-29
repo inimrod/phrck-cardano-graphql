@@ -1,0 +1,61 @@
+version: "3.5"
+
+services:
+  cardano-db-sync-extended:
+    container_name: db-sync
+    image: inputoutput/cardano-db-sync:${CARDANO_DB_SYNC_VERSION:-5.0.1}
+    command: [
+      "--config", "/config/config.json",
+      "--socket-path", "/node-ipc/node"
+    ]
+    network_mode: "host"
+    environment:
+      - EXTENDED=true
+      - POSTGRES_HOST=${POSTGRES_HOST:-127.0.0.1}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+    secrets:
+      - postgres_password
+      - postgres_user
+      - postgres_db
+    volumes:
+      - ./config/network/${NETWORK:-mainnet}/cardano-db-sync:/config
+      - ./config/network/${NETWORK:-mainnet}/genesis:/genesis
+      - ../../cnode/socket:/node-ipc
+    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+  hasura:
+    container_name: hasura
+    build:
+      context: ./packages/api-cardano-db-hasura/hasura
+    image: inputoutput/cardano-graphql-hasura:${CARDANO_GRAPHQL_VERSION:-2.2.0}
+    restart: on-failure
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_DB_FILE=/run/secrets/postgres_db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+      - HASURA_GRAPHQL_ENABLE_CONSOLE=true
+      - HASURA_GRAPHQL_ADMIN_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET}
+      - HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup, http-log, webhook-log, websocket-log, query-log
+      - HASURA_GRAPHQL_ENABLE_TELEMETRY=false
+    secrets:
+      - postgres_db
+      - postgres_password
+      - postgres_user
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+secrets:
+  postgres_db:
+    file: ./config/secrets/postgres_db
+  postgres_password:
+    file: ./config/secrets/postgres_password
+  postgres_user:
+    file: ./config/secrets/postgres_user
