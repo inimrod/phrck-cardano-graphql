@@ -29,9 +29,9 @@ EOF
 sed -i 's/RUN hasura --skip-update-check update-cli --version v1.2.1/RUN hasura --skip-update-check update-cli --version v1.3.2/' Dockerfile
 
 # postgres secrets:
-echo ${POSTGRES_DB} > config/secrets/postgres_db
-echo ${POSTGRES_USER} > config/secrets/postgres_user
-echo ${POSTGRES_PASSWORD} > config/secrets/postgres_password
+echo -n ${POSTGRES_DB} > config/secrets/postgres_db
+echo -n ${POSTGRES_USER} > config/secrets/postgres_user
+echo -n ${POSTGRES_PASSWORD} > config/secrets/postgres_password
 
 # hasura image version:
 cat > packages/api-cardano-db-hasura/hasura/Dockerfile << EOF
