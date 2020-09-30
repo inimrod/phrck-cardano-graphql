@@ -1,4 +1,3 @@
-
 // location: packages/api-cardano-db-hasura/src/Config.ts
 export interface Config {
     db: {
