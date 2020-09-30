@@ -42,8 +42,41 @@ services:
       - POSTGRES_USER_FILE=/run/secrets/postgres_user
       - HASURA_GRAPHQL_ENABLE_CONSOLE=true
       - HASURA_GRAPHQL_ADMIN_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET}
+      - HASURA_GRAPHQL_UNAUTHORIZED_ROLE=cardano-graphql
       - HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup, http-log, webhook-log, websocket-log, query-log
       - HASURA_GRAPHQL_ENABLE_TELEMETRY=false
+    secrets:
+      - postgres_db
+      - postgres_password
+      - postgres_user
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+  cardano-graphql:
+    container_name: cardano-graphql
+    network_mode: "host"
+    build:
+      context: .
+      target: server
+      args:
+        - NETWORK=${NETWORK:-mainnet}
+    image: inputoutput/cardano-graphql:${CARDANO_GRAPHQL_VERSION:-2.2.0}
+    environment:
+      - ALLOW_INTROSPECTION=true
+      - CACHE_ENABLED=true
+      - GENESIS_FILE_BYRON=/config/genesis/byron.json
+      - GENESIS_FILE_SHELLEY=/config/genesis/shelley.json
+      - HASURA_URI=http://hasura:8080
+      - POSTGRES_HOST=${POSTGRES_HOST:-127.0.0.1}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_DB_FILE=/run/secrets/postgres_db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+    expose:
+      - 9105
+    restart: on-failure
     secrets:
       - postgres_db
       - postgres_password
