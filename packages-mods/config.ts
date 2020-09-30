@@ -1,3 +1,4 @@
+// location: packages/server/src/config.ts
 import { Config as ApiCardanoDbHasuraConfig } from '@cardano-graphql/api-cardano-db-hasura'
 import { Config as ApiGenesisConfig } from '@cardano-graphql/api-genesis'
 import { MissingConfig } from './errors'

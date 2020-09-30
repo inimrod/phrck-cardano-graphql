@@ -69,6 +69,7 @@ services:
       - GENESIS_FILE_BYRON=/config/genesis/byron.json
       - GENESIS_FILE_SHELLEY=/config/genesis/shelley.json
       - HASURA_URI=http://127.0.0.1:8080
+      - HASURA_GRAPHQL_ADMIN_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET}
       - POSTGRES_HOST=${POSTGRES_HOST:-127.0.0.1}
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
       - POSTGRES_DB_FILE=/run/secrets/postgres_db

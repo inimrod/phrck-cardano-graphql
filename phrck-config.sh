@@ -23,6 +23,9 @@ POSTGRES_HOST=127.0.0.1
 POSTGRES_PORT=5432
 EOF
 
+# update graphql version in Dockerfile
+sed -i 's/RUN hasura --skip-update-check update-cli --version v1.2.1/RUN hasura --skip-update-check update-cli --version v1.3.2/' Dockerfile
+
 # postgres secrets:
 echo ${POSTGRES_DB} > config/secrets/postgres_db
 echo ${POSTGRES_USER} > config/secrets/postgres_user
@@ -34,3 +37,11 @@ FROM hasura/graphql-engine:${HASURA_GRAPHQL_ENGINE_VER}
 COPY docker-entrypoint.sh /bin/
 EXPOSE ${HASURA_GRAPHQL_ENGINE_PORT}
 EOF
+
+# hasura client files, allow interaction with hasura endpoint protected with admin-secret
+rm -vf packages/api-cardano-db-hasura/src/HasuraClient.ts
+rm -vf packages/server/src/CompleteApiServer.ts
+rm -vf packages/server/src/config.ts
+curl https://raw.githubusercontent.com/inimrod/phrck-cardano-graphql/master/packages-mods/HasuraClient.ts -o packages/api-cardano-db-hasura/src/HasuraClient.ts
+curl https://raw.githubusercontent.com/inimrod/phrck-cardano-graphql/master/packages-mods/CompleteApiServer.ts -o packages/server/src/CompleteApiServer.ts
+curl https://raw.githubusercontent.com/inimrod/phrck-cardano-graphql/master/packages-mods/config.ts -o packages/server/src/config.ts

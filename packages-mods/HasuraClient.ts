@@ -1,4 +1,4 @@
-// location: packages/api-cardano-db-hasura/src/
+// location: packages/api-cardano-db-hasura/src/HasuraClient.ts
 import { ApolloClient, gql, InMemoryCache, NormalizedCacheObject } from 'apollo-boost'
 import { createHttpLink } from 'apollo-link-http'
 import util from '@cardano-graphql/util'
