@@ -1,0 +1,592 @@
+- table:
+    schema: public
+    name: Block
+  configuration:
+    custom_root_fields:
+      select_aggregate: blocks_aggregate
+      select: blocks
+    custom_column_names: {}
+  object_relationships:
+  - name: epoch
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Epoch
+        column_mapping:
+          epochNo: number
+  - name: nextBlock
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Block
+        column_mapping:
+          nextBlockHash: hash
+  - name: previousBlock
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Block
+        column_mapping:
+          previousBlockHash: hash
+  - name: slotLeader
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: SlotLeader
+        column_mapping:
+          slot_leader_id: id
+  array_relationships:
+  - name: transactions
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          hash: blockHash
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - epochNo
+      - fees
+      - forgedAt
+      - hash
+      - merkelRoot
+      - nextBlockHash
+      - number
+      - opCert
+      - previousBlockHash
+      - protocolVersion
+      - size
+      - slotInEpoch
+      - slot_leader_id
+      - slotNo
+      - transactionsCount
+      - vrfKey
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: Cardano
+  configuration:
+    custom_root_fields:
+      select: cardano
+    custom_column_names: {}
+  object_relationships:
+  - name: currentEpoch
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Epoch
+        column_mapping:
+          currentEpochNo: number
+  - name: tip
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Block
+        column_mapping:
+          tipBlockNo: number
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - currentEpochNo
+      - tipBlockNo
+      filter: {}
+      limit: 1
+- table:
+    schema: public
+    name: Delegation
+  configuration:
+    custom_root_fields:
+      select_aggregate: delegations_aggregate
+      select: delegations
+    custom_column_names: {}
+  object_relationships:
+  - name: stakePool
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: StakePool
+        column_mapping:
+          pool_hash: hash
+  - name: transaction
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          tx_id: id
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - address
+      - id
+      - tx_id
+      - pool_hash
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: Epoch
+  configuration:
+    custom_root_fields:
+      select_aggregate: epochs_aggregate
+      select: epochs
+    custom_column_names: {}
+  array_relationships:
+  - name: blocks
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Block
+        column_mapping:
+          number: epochNo
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - blocksCount
+      - fees
+      - lastBlockTime
+      - number
+      - output
+      - startedAt
+      - transactionsCount
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: Reward
+  configuration:
+    custom_root_fields:
+      select_aggregate: rewards_aggregate
+      select: rewards
+    custom_column_names: {}
+  object_relationships:
+  - name: transaction
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          tx_id: id
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - address
+      - amount
+      - id
+      - tx_id
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: SlotLeader
+  object_relationships:
+  - name: stakePool
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: StakePool
+        column_mapping:
+          pool_hash: hash
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - id
+      - description
+      - hash
+      - pool_hash
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: StakeDeregistration
+  configuration:
+    custom_root_fields:
+      select_aggregate: stakeDeregistrations_aggregate
+      select: stakeDeregistrations
+    custom_column_names: {}
+  object_relationships:
+  - name: transaction
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          tx_id: id
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - address
+      - id
+      - tx_id
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: StakePool
+  configuration:
+    custom_root_fields:
+      select_aggregate: stakePools_aggregate
+      select: stakePools
+    custom_column_names: {}
+  object_relationships:
+  - name: updatedIn
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          updated_in_tx_id: id
+  array_relationships:
+  - name: owners
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: pool_owner
+        column_mapping:
+          id: pool_hash_id
+  - name: relays
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: pool_relay
+        column_mapping:
+          id: update_id
+  - name: retirements
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: StakePoolRetirement
+        column_mapping:
+          hash: pool_hash
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - fixedCost
+      - hash
+      - margin
+      - metadataHash
+      - pledge
+      - rewardAddress
+      - url
+      - id
+      - blockNo
+      - updated_in_tx_id
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: StakePoolRetirement
+  object_relationships:
+  - name: announcedIn
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          tx_id: id
+  - name: retiredInEpoch
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Epoch
+        column_mapping:
+          inEffectFrom: transactionsCount
+  - name: stakePool
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: StakePool
+        column_mapping:
+          pool_hash: hash
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - inEffectFrom
+      - tx_id
+      - pool_hash
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: StakeRegistration
+  configuration:
+    custom_root_fields:
+      select_aggregate: stakeRegistrations_aggregate
+      select: stakeRegistrations
+    custom_column_names: {}
+  object_relationships:
+  - name: transaction
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          tx_id: id
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - address
+      - tx_id
+      - id
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: Transaction
+  configuration:
+    custom_root_fields:
+      select_aggregate: transactions_aggregate
+      select: transactions
+    custom_column_names: {}
+  object_relationships:
+  - name: block
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Block
+        column_mapping:
+          blockHash: hash
+  array_relationships:
+  - name: inputs
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: TransactionInput
+        column_mapping:
+          hash: txHash
+  - name: outputs
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: TransactionOutput
+        column_mapping:
+          hash: txHash
+  - name: withdrawals
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Withdrawal
+        column_mapping:
+          id: tx_id
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - blockHash
+      - blockIndex
+      - deposit
+      - fee
+      - hash
+      - includedAt
+      - size
+      - totalOutput
+      - id
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: TransactionInput
+  object_relationships:
+  - name: sourceTransaction
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          sourceTxHash: hash
+  - name: transaction
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          txHash: hash
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - address
+      - value
+      - txHash
+      - sourceTxHash
+      - sourceTxIndex
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: TransactionOutput
+  object_relationships:
+  - name: transaction
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          txHash: hash
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - address
+      - value
+      - txHash
+      - index
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: Utxo
+  configuration:
+    custom_root_fields:
+      select_aggregate: utxos_aggregate
+      select: utxos
+    custom_column_names: {}
+  object_relationships:
+  - name: transaction
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          txHash: hash
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - address
+      - value
+      - txHash
+      - index
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: Withdrawal
+  configuration:
+    custom_root_fields:
+      select_aggregate: withdrawals_aggregate
+      select: withdrawals
+    custom_column_names: {}
+  object_relationships:
+  - name: transaction
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Transaction
+        column_mapping:
+          tx_id: id
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - amount
+      - address
+      - id
+      - tx_id
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: pool_owner
+  object_relationships:
+  - name: stakePool
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: StakePool
+        column_mapping:
+          pool_hash_id: id
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - id
+      - hash
+      - pool_hash_id
+      - registered_tx_id
+      filter: {}
+      limit: 100
+      allow_aggregations: true
+- table:
+    schema: public
+    name: pool_relay
+  object_relationships:
+  - name: stakePool
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: StakePool
+        column_mapping:
+          update_id: id
+  select_permissions:
+  - role: cardano-graphql
+    permission:
+      columns:
+      - id
+      - update_id
+      - dns_name
+      - dns_srv_name
+      - ipv4
+      - ipv6
+      - port
+      filter: {}
+      limit: 100
+      allow_aggregations: true

@@ -47,7 +47,9 @@ EOF
 rm -vf packages/api-cardano-db-hasura/src/HasuraClient.ts
 rm -vf packages/server/src/CompleteApiServer.ts
 rm -vf packages/server/src/config.ts
+rm -vf packages/api-cardano-db-hasura/hasura/project/metadata/tables.yaml
 curl https://raw.githubusercontent.com/inimrod/phrck-cardano-graphql/master/packages-mods/HasuraClient.ts -o packages/api-cardano-db-hasura/src/HasuraClient.ts
 curl https://raw.githubusercontent.com/inimrod/phrck-cardano-graphql/master/packages-mods/hasura-config.ts -o packages/api-cardano-db-hasura/src/Config.ts
 curl https://raw.githubusercontent.com/inimrod/phrck-cardano-graphql/master/packages-mods/CompleteApiServer.ts -o packages/server/src/CompleteApiServer.ts
 curl https://raw.githubusercontent.com/inimrod/phrck-cardano-graphql/master/packages-mods/apollo-config.ts -o packages/server/src/config.ts
+curl https://raw.githubusercontent.com/inimrod/phrck-cardano-graphql/master/packages-mods/graphql-tables.yaml -o packages/api-cardano-db-hasura/hasura/project/metadata/tables.yaml
