@@ -63,6 +63,8 @@ export async function getConfig (): Promise<Config> {
       user: postgresUser || (await fs.readFile(postgresUserFile, 'utf8')).toString()
     }
   } catch (error) {
+    console.log("var db: ")
+    console.log(db)
     throw new MissingConfig('Database configuration cannot be read')
   }
   return {
